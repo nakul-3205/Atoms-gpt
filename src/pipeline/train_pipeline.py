@@ -15,7 +15,7 @@ class TrainPipeline:
         os.makedirs(self.ckpt_dir, exist_ok=True)
         os.makedirs(self.model_dir, exist_ok=True)
 
-        self.device = torch.device("cpu")  # Intel CPU — reliable & stable
+        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         logger.info(f"Training on device: {self.device}")
 
     def run(self, train_loader, val_loader):
