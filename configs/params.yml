@@ -1,0 +1,22 @@
+model:
+  vocab_size: 50257       
+  embed_dim: 384
+  n_heads: 6
+  n_layers: 6
+  context_length: 128
+  dropout: 0.1
+
+training:
+  batch_size: 16
+  epochs: 10
+  learning_rate: 0.0003
+  val_split: 0.1
+  checkpoint_every: 1     
+  grad_clip: 1.0
+
+paths:
+  raw_data: data/raw/atoms_combined.csv
+  processed_data: data/processed/atoms_tokenized.pt
+  checkpoint_dir: artifacts/checkpoints
+  model_dir: artifacts/model
+  log_dir: artifacts/logs

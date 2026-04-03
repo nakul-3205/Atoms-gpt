@@ -1,0 +1,11 @@
+huggingface_hub 
+pandas 
+matplotlib 
+seaborn
+numpy
+torch
+transformers
+datasets
+pandas
+pyyaml
+jupyter
