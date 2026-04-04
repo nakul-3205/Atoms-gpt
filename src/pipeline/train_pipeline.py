@@ -20,12 +20,30 @@ class TrainPipeline:
 
     def run(self, train_loader, val_loader):
         model = AtomsGPT(self.config).to(self.device)
-        optimizer = torch.optim.AdamW(model.parameters(), lr=self.lr)
-        scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(
-            optimizer, T_max=self.epochs
-        )
+    optimizer = torch.optim.AdamW(model.parameters(), lr=self.lr)
+    scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(
+        optimizer, T_max=self.epochs
+    )
 
-        best_val_loss = float('inf')
+    start_epoch = 1
+    best_val_loss = float('inf')
+
+    ckpt_files = sorted([
+        f for f in os.listdir(self.ckpt_dir)
+        if f.endswith('.pth') and 'epoch' in f
+    ])
+
+    if ckpt_files:
+        last_ckpt = os.path.join(self.ckpt_dir, ckpt_files[-1])
+        logger.info(f"Resuming from checkpoint: {last_ckpt}")
+        ckpt = torch.load(last_ckpt, map_location=self.device)
+        model.load_state_dict(ckpt['model_state'])
+        optimizer.load_state_dict(ckpt['optimizer_state'])
+        start_epoch = ckpt['epoch'] + 1
+        best_val_loss = ckpt.get('val_loss', float('inf'))
+        logger.info(f"Resumed from Epoch {ckpt['epoch']} ✅")
+    else:
+        logger.info("No checkpoint found, starting fresh.")
 
         for epoch in range(1, self.epochs + 1):
             # ── Train ──
